@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { AlertCircle } from "lucide-react";
 import {
@@ -15,17 +16,31 @@ interface ToneTabProps {
   classifications: any[];
 }
 
-// Funzione per ottenere il colore del badge in base al tono
+// Funzione per ottenere il colore del badge in base al tono in stile minimal
 const getToneColor = (toneName: string) => {
   switch (toneName) {
-    case 'excited': return 'bg-green-500 hover:bg-green-600';
-    case 'satisfied': return 'bg-blue-500 hover:bg-blue-600';
-    case 'polite': return 'bg-purple-500 hover:bg-purple-600';
-    case 'sympathetic': return 'bg-yellow-500 hover:bg-yellow-600';
-    case 'frustrated': return 'bg-orange-500 hover:bg-orange-600';
-    case 'sad': return 'bg-gray-500 hover:bg-gray-600';
-    case 'impolite': return 'bg-red-500 hover:bg-red-600';
-    default: return '';
+    case 'excited': return 'bg-gray-900 hover:bg-gray-950';
+    case 'satisfied': return 'bg-gray-800 hover:bg-gray-900';
+    case 'polite': return 'bg-gray-700 hover:bg-gray-800';
+    case 'sympathetic': return 'bg-gray-600 hover:bg-gray-700';
+    case 'frustrated': return 'bg-gray-500 hover:bg-gray-600';
+    case 'sad': return 'bg-gray-400 hover:bg-gray-500 text-gray-900';
+    case 'impolite': return 'bg-gray-300 hover:bg-gray-400 text-gray-900';
+    default: return 'bg-gray-200 text-gray-900';
+  }
+};
+
+// Funzione per ottenere il colore della progress bar
+const getProgressColor = (toneName: string) => {
+  switch (toneName) {
+    case 'excited': return 'bg-gray-900';
+    case 'satisfied': return 'bg-gray-800';
+    case 'polite': return 'bg-gray-700';
+    case 'sympathetic': return 'bg-gray-600';
+    case 'frustrated': return 'bg-gray-500';
+    case 'sad': return 'bg-gray-400';
+    case 'impolite': return 'bg-gray-300';
+    default: return 'bg-gray-200';
   }
 };
 
@@ -72,7 +87,11 @@ const ToneTab: React.FC<ToneTabProps> = ({ classifications }) => {
                 </div>
                 <div>{(tone.confidence * 100).toFixed(1)}%</div>
               </div>
-              <Progress value={tone.confidence * 100} className="h-2" />
+              <Progress 
+                value={tone.confidence * 100} 
+                className="h-2" 
+                indicatorClassName={getProgressColor(tone.class_name)}
+              />
             </div>
           ))}
         </div>
