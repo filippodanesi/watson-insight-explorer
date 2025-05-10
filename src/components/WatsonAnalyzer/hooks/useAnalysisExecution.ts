@@ -125,6 +125,8 @@ export const useAnalysisExecution = ({
     };
 
     try {
+      console.log('Sending request to:', currentUrl);
+      
       // Determine the authentication method based on environment variables
       const authType = getAuthType();
       let headers = {
@@ -145,8 +147,21 @@ export const useAnalysisExecution = ({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'API request failed');
+        const errorText = await response.text();
+        let errorMessage = 'API request failed';
+        
+        try {
+          // Try to parse as JSON if possible
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.error || errorData.message || `Error ${response.status}: ${response.statusText}`;
+        } catch (e) {
+          // If not JSON, use status text or the raw error text
+          errorMessage = response.status === 404 ? 
+            'Service URL not found (404). Please check your API endpoint.' : 
+            `Error ${response.status}: ${response.statusText || errorText}`;
+        }
+        
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();
@@ -158,9 +173,13 @@ export const useAnalysisExecution = ({
       });
     } catch (error) {
       console.error('Error analyzing text:', error);
+      
+      // Improved error message
+      const errorMessage = error instanceof Error ? error.message : "An error occurred during analysis.";
+      
       toast({
         title: "Analysis failed",
-        description: error instanceof Error ? error.message : "An error occurred during analysis.",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
